@@ -11,4 +11,15 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag denniszielke/locust:$(date +%s)
+      env:
+        DOCKER_HUB: ${{ secrets.DOCKER_HUB }}
+        DOCKER_HUB_SECRET: ${{ secrets.DOCKER_HUB_SECRET }}
+      run: |
+        ls -l
+        echo "Docker login"
+        docker login -u $DOCKER_HUB -p $DOCKER_HUB_SECRET
+        echo "Running docker build"
+        docker build . --file Dockerfile --tag denniszielke/locust:latest
+        echo "Pushing image"
+        docker push denniszielke/locust:latest
+        echo "Done"
